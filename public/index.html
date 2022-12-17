@@ -7,16 +7,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Tic Toe</title>
         <link rel="stylesheet" href="style.css">
+        <script src="/socket.io/socket.io.js"></script>
     </head>
 
     <body>
 
         <div class="player2 turn">
             player 2 - X
+            <div class="p2"></div>
         </div>
 
         <div class="game">
-
+            <div class="currentPlayerName" style="text-align: center;"></div>
             <div class="nextPlayer"></div>
 
             <div id="row1" class="row">
@@ -46,9 +48,11 @@
         </div>
         <div class="player1 turn">
             player 1 - 0
+            <div class="p1"></div>
+
         </div>
 
-        <script src="script.js"></script>
+        <script type="module" src="script.js"></script>
     </body>
 
 </html>

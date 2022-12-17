@@ -1,3 +1,5 @@
+const socket = io("ws://localhost:3000");
+
 // Define variables
 let CIRCLE = '<div class="circle"></div>';
 let CROSS = '<div class="cross"></div>';
@@ -17,8 +19,15 @@ document.querySelectorAll(".block").forEach((block, id) => {
   block.addEventListener("click", selectBox);
 });
 let nextPlayer = document.querySelector(".nextPlayer");
+let currentPlayerName = document.querySelector(".currentPlayerName");
+let p1 = document.querySelector(".p1");
+let p2 = document.querySelector(".p2");
 
 nextPlayer.innerHTML = isPlayerOne ? "Next Player 1" : "Next Player 2";
+let playerName = prompt("Enter your name");
+
+currentPlayerName.innerHTML = `You:  ${playerName}`;
+
 function getId(id) {
   return parseInt(id.split("").pop());
 }
@@ -171,18 +180,32 @@ function selectBox(block) {
   let col = (getId(block.target.id) - 1) % 3;
   let row = getId(block.target.parentElement.id) - 1;
 
-  // console.log(row, col, board[row][col]);
-
   if (board[row][col]) return;
 
   if (isPlayerOne) {
     document.getElementById(block.target.id).innerHTML = CIRCLE;
     board[row][col] = CIRCLE;
     isPlayerOne = false;
+    socket.emit("selectBox", {
+      player: playerName,
+      row,
+      col,
+      id: socket.id,
+      type: "CIRCLE",
+      block: block.target.id,
+    });
   } else {
     document.getElementById(block.target.id).innerHTML = CROSS;
     board[row][col] = CROSS;
     isPlayerOne = true;
+    socket.emit("selectBox", {
+      player: playerName,
+      id: socket.id,
+      row,
+      col,
+      type: "CROSS",
+      block: block.target.id,
+    });
   }
   nextPlayer.innerHTML = isPlayerOne ? "Next Player 1" : "Next Player 2";
   console.log(isPlayerOne);
@@ -191,3 +214,51 @@ function selectBox(block) {
     checkWinner();
   }
 }
+
+socket.on("connect", () => {
+  console.log("connected to server");
+
+  p1.innerHTML = playerName;
+
+  socket.emit("join", { name: playerName });
+
+  socket.on("player1", (data) => {
+    console.log(data);
+  });
+
+  socket.on("player2", (data) => {
+    console.log(data);
+
+    p2.innerHTML = data.name.name;
+    p1.innerHTML = data.player1.name;
+
+    // p2.innerHTML = data.name;
+  });
+
+  socket.on("selectBox", (data) => {
+    console.log(data);
+    TURN++;
+    if (board[data.row][data.col]) return;
+
+    if (data.id != socket.id) {
+      // player 2
+      document.getElementById(data.block).innerHTML =
+        data.type === "CIRCLE" ? CIRCLE : CROSS;
+      board[data.row][data.col] = data.type === "CIRCLE" ? CIRCLE : CROSS;
+      isPlayerOne = !isPlayerOne;
+      nextPlayer.innerHTML = isPlayerOne ? "Next Player 1" : "Next Player 2";
+      console.log(isPlayerOne);
+    } else {
+      // player 1
+      isPlayerOne = !isPlayerOne;
+
+      console.log("same player");
+    }
+
+    if (TURN > 3) {
+      checkWinner();
+    }
+  });
+
+  // socket.emit('join', {name: 'player1', room: 'room1'});
+});
