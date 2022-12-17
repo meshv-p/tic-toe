@@ -1,0 +1,73 @@
+body{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 100vh;
+    align-items: center;
+}
+
+
+/* Game Element */
+.circle{
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    border: 2px solid black;
+    pointer-events: none;
+}
+
+.cross{
+    font-size: xxx-large;
+}
+.cross::after{
+    content: "X";
+    font-size: larger;
+    transform: scale(.5);
+}
+
+
+/* players */
+/* .player2.turn::after{
+    content: "<";
+}
+
+
+.player1.turn::before{
+    content: ">";
+} */
+
+
+
+.row{
+    display: flex;
+}
+
+
+.nextPlayer{
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    margin: 2rem 0;
+    color: red;
+}
+.block{
+    width: 130px;
+    height: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#b1,#b2,#b4,#b5,#b7,#b8{
+    border-right: 2px solid black;
+}   
+
+#b4,#b5,#b6{
+    border-top: 2px   solid black;
+    border-bottom: 2px   solid black;
+}   
+
+@media (min-width:320px ) and (max-width:580px) {
+    body{
+        flex-direction: column;
+    }
+}
