@@ -1,4 +1,5 @@
-const socket = io("ws://localhost:3000");
+const socket = io(process.env.HOST);
+require("dotenv").config();
 
 // Define variables
 let CIRCLE = '<div class="circle"></div>';
